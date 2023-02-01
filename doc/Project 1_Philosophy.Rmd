@@ -1,0 +1,1368 @@
+---
+title: "Evaluating the diverse writing styles of authors within philosophical schools"
+
+author: "Saloni Dingore"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+```{r include=FALSE}
+# Packages & Libraries
+
+packages = c("tidyverse", "tidytext", "DT", "RColorBrewer", "wordcloud", "SnowballC", "knitr", "lexicon", "sentimentr", "textdata", "syuzhet")
+
+# Install packages(if not installed)
+install_packages <- packages %in% rownames(installed.packages())
+if (any(install_packages == FALSE)) {
+  install.packages(packages[!install_packages])
+}
+
+# Load required libraries
+(lapply(packages, library, character.only = TRUE))
+
+# Read Data
+philosophy = read.csv("../data/philosophy_data.csv")
+```
+
+```{r include=FALSE}
+# Basic EDA of data
+# View the structure of data
+#skim(philosophy)
+
+# Number of authors in each school
+philosophy %>%
+  group_by(school) %>%
+  summarize(author = n_distinct(author)) %>%
+  arrange(desc(author)) 
+
+# Name of the authors in each school
+philosophy %>%
+  group_by(school) %>%
+  summarize(author = unique(author)) %>%
+  arrange(school)
+
+# Filter out data for each author, converted the sentences into tokens and remove stop-words for the autthors
+
+# Data Story and Analysis
+```
+
+```{r echo=FALSE, fig.align='center'}
+
+#Reading image from url
+
+include_graphics("https://i0.wp.com/greekerthanthegreeks.com/wp-content/uploads/2014/11/img-ancient-greek-philosophers.jpg?w=1000&ssl=1")
+
+```
+
+**Philosophy** as per the Greeks, is 'the love for wisdom'. It may or may not have something to do with the existence of God or religion. It resonates with spirituality.
+
+There have been a lot of schools of thought that answer to what wisdom may be interpreted as. 13 of these are mentioned in the 'History of Philosophy' Kaggle dataset. These schools of thought have passed down generations through the words of the 'philosophers' that founded them. Let us learn a little about how they were advocated within different schools of thought.
+
+We'll analyze different schools and within the school will determine whether the authors utilize analogous or dissimilar words to express the core idea.
+
+So, Lets begin
+
+#### **The School of Analytics**
+
+The analytics school places an emphasis on ideas that are logical, significant, lend credence to a viewpoint, and have a distinct point of view.
+
+Let's compare the words that various authors utilized to express their messages and take a closer look at them.
+
+#### ***Author Russel***
+
+```{r echo=FALSE}
+author_ru = philosophy %>%
+  filter(author == "Russell") %>%
+  select(author, sentence_lowered)
+
+tokens <- author_ru %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Moore***
+
+```{r echo=FALSE}
+author_mo = philosophy %>%
+  filter(author == "Moore") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_mo %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Wittgenstein***
+
+```{r echo=FALSE}
+author_wi = philosophy %>%
+  filter(author == "Wittgenstein") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_wi %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Lewis***
+
+```{r echo=FALSE}
+author_lew = philosophy %>%
+  filter(author == "Lewis") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_lew %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Quine***
+
+```{r echo=FALSE}
+author_qu = philosophy %>%
+  filter(author == "Quine") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_qu %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Popper***
+
+```{r echo=FALSE}
+author_po = philosophy %>%
+  filter(author == "Popper") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_po %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Kripke***
+
+```{r echo=FALSE}
+author_kr = philosophy %>%
+  filter(author == "Kripke") %>%
+  select(author, sentence_lowered)
+
+tokens <- author_kr %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+According to word clouds and sentiment analysis of several authors from the school of analytics, authors Moore, Lewis, and Popper used fewer words to describe their thoughts and used these terms more frequently in comparison to other authors. Despite the fact that each author was trying to convey the same topic, their writing styles and word choices diverged.
+
+With the exception of Quine, Popper, and Kripke, who utilized more positive words, all authors' opinions are equally balanced in terms of positive and negative sentiment.
+
+#### **The School of Rationalism**
+
+The school of rationalism believes that knowledge is tested by reasoning.
+
+#### ***Author Spinoza***
+
+```{r echo=FALSE}
+author_sp = philosophy %>%
+  filter(author == "Spinoza") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_sp %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Leibniz***
+
+```{r echo=FALSE}
+author_le = philosophy %>%
+  filter(author == "Leibniz") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_le %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Descartes***
+
+```{r echo=FALSE}
+author_de = philosophy %>%
+  filter(author == "Descartes") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_de %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+
+```
+
+#### ***Author Malebranche***
+
+```{r echo=FALSE}
+author_ma = philosophy %>%
+  filter(author == "Malebranche") %>%
+  select(author, sentence_lowered)
+
+tokens <- author_ma %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+Authors Descartes, Malebranche, and Spinoza all have writing styles that are quite evenly dispersed in the word cloud above. They primarily used words like "god," "nature," "mind," "idea," and "body" to portray their concepts in support that life is based on reason and intuition rather than emotions and beliefs. While Leibniz primarily expressed these ideas by using the word "god."
+
+To highlight that our comprehension of the truth is obtained without sensory perception, Descartes used more positive adjectives while Malebranche used more negative ones.
+
+#### **The School of Capitalism**
+
+The fundamental tenet of the school of capitalism is the pursuit of profit.
+
+#### ***Author Smith***
+
+```{r echo=FALSE}
+author_smith = philosophy %>%
+  filter(author == "Smith") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_smith %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Ricardo***
+
+```{r echo=FALSE}
+author_ric = philosophy %>%
+  filter(author == "Ricardo") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_ric %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Keynes***
+
+```{r echo=FALSE}
+author_key = philosophy %>%
+  filter(author == "Keynes") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_key %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+The authors of these schools all write in a similar manner because they use the same common phrases or definitions of words like "price," "country," "trade," and "capital" to describe their ideas.
+
+Additionally, the authors' emotional expression is well-balanced.
+
+#### **The School of Continental**
+
+The school of continental thought holds non-analytical views and is concerned with the fusion of modernity with history and individuals with society.
+
+#### ***Author Foucault***
+
+```{r echo=FALSE}
+author_fo = philosophy %>%
+  filter(author == "Foucault") %>%
+  select(author, sentence_lowered)
+
+tokens <- author_fo %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Derrida***
+
+```{r echo=FALSE}
+author_der = philosophy %>%
+  filter(author == "Derrida") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_der %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Deleuze***
+
+```{r echo=FALSE}
+author_dele = philosophy %>%
+  filter(author == "Deleuze") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_dele %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+To illustrate the central idea of the school, Foucault used words like madness, language, century, and nature. Derrida used words like meaning, writing, language, and history, while Deleuze used words like difference, repetition, production, and social. In general all this authors used different words to replicate same chain of thoughts.
+
+In contrast to Derrida, who employed both negative and positive sentiment equally, Foucault and Deleuze placed more emphasis on negative words than on positive words.
+
+#### **The School of Empiricism**
+
+The school of empiricism belives that all concepts can be applied to sense-perceivable phenomena.
+
+#### ***Author Locke***
+
+```{r echo=FALSE}
+author_lo = philosophy %>%
+  filter(author == "Locke") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_lo %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Hume***
+
+```{r echo=FALSE}
+author_hu = philosophy %>%
+  filter(author == "Hume") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_hu %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Berkeley***
+
+```{r echo=FALSE}
+author_be = philosophy %>%
+  filter(author == "Berkeley") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_be %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+The authors of this school place more emphasis on the word "idea" to convey their major point, which is that all conceptions apply to things that can be experienced or that all morally correct beliefs are supported by sense perception.
+
+Berkeley represents the same thoughts as Locke while focusing more on positive words, whereas Locke focuses more on negative phrases.
+
+#### **The School of Feminism**
+
+Social, economic, and political equality for women are central believe in the school of feminism.
+
+#### ***Author Wollstonecraft***
+
+```{r echo=FALSE}
+author_woll = philosophy %>%
+  filter(author == "Wollstonecraft") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+
+tokens <- author_woll %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Beauvoir***
+
+```{r echo=FALSE}
+author_bea = philosophy %>%
+  filter(author == "Beauvoir") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_bea %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Davis***
+
+```{r echo=FALSE}
+author_davis = philosophy %>%
+  filter(author == "Davis") %>%
+  select(author, sentence_lowered)
+
+tokens <- author_davis %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+In the idealogy of feminism, Wollstonecraft and Beauvoir focused on utilizing words to communicate concepts about the lives, families, and relationships of women, whereas Davis used terms like ethnicity, race, and rights in the same context.
+
+Despite the fact that Wollstonecraft and Beauvoir used the same collection of words to express their ideas, sentiment analysis reveals that Beauvoir focused on the negative forms of words.
+
+#### **The School of German Idealism**
+
+The school of German idealism believes in reality and holds that truth is the entirety.
+
+#### ***Author Kant***
+
+```{r echo=FALSE}
+author_ka = philosophy %>%
+  filter(author == "Kant") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_ka %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Fichte***
+
+```{r echo=FALSE}
+author_fi = philosophy %>%
+  filter(author == "Fichte") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_fi %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Hegel***
+
+```{r echo=FALSE}
+author_heg = philosophy %>%
+  filter(author == "Hegel") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_heg %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+Each author choose a different word to convey their ideas on reality. Fichte concentrated on the positive words , whilst Hegel partly concentrated on the negative words.
+
+#### **The School of Phenomenology**
+
+The school of phenomenology believes in analyzing observed phenomena without prior assumptions to avoid prejudice.
+
+#### ***Author Merleau-Ponty***
+
+```{r echo=FALSE}
+author_me = philosophy %>%
+  filter(author == "Merleau-Ponty") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_me %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Husserl***
+
+```{r echo=FALSE}
+author_hu = philosophy %>%
+  filter(author == "Husserl") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_hu %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Heidegger***
+
+```{r echo=FALSE}
+author_hei = philosophy %>%
+  filter(author == "Heidegger") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_hei %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+In this school, authors frequently used the word "world" to focus solely on ideas about worldly phenomena and their logical reasons
+
+Husserl placed greater emphasis on using positive words, while Heidegger used certain German words to convey his ideas.
+
+#### **The School of Communism**
+
+The School of Communism envisions a society without classes.
+
+#### ***Author Marx***
+
+```{r echo=FALSE}
+author_marx = philosophy %>%
+  filter(author == "Marx") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_marx %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Lenin***
+
+```{r echo=FALSE}
+author_lenin = philosophy %>%
+  filter(author == "Lenin") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_lenin %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+Marx utilized a very limited number of words, with the term "labor" taking precedence over words like production and capital. Lenin's writing style is fairly varied; he employed numerous terms to convey his ideas.
+
+#### **The School of Stoicism**
+
+The School of Stoicism believes that virtue is enough to lead a good life.
+
+#### ***Author Epictetus***
+
+```{r echo=FALSE}
+author_epi = philosophy %>%
+  filter(author == "Epictetus") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_epi %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+#### ***Author Marcus Aurelius***
+
+```{r echo=FALSE}
+author_marcus = philosophy %>%
+  filter(author == "Marcus Aurelius") %>%
+  select(title, author, sentence_length, sentence_lowered)
+
+tokens <- author_marcus %>% 
+  unnest_tokens(word, sentence_lowered) %>% 
+  dplyr::count(word, sort = TRUE) %>% 
+  ungroup()
+
+data("stop_words")
+tokens_clean <- tokens %>%
+  anti_join(stop_words)
+
+# plot the 100 most common words
+wordcloud(tokens_clean$word, tokens_clean$n, max.words=100,
+          min.freq=5,
+          random.order=FALSE,
+          rot.per=0.3,
+          colors=brewer.pal(8,"Purples"))
+```
+
+```{r echo=FALSE}
+
+author <- iconv(tokens_clean)
+
+sentiment <- get_nrc_sentiment(author)
+
+barplot(colSums(sentiment),
+        las = 2,
+        col = rainbow(8),
+        ylab = 'Count',
+        main = 'Sentiment Scores')
+```
+
+Different authors at this school have different writing styles. In contrast to Marcus Aurelius, who wrote in a more abstract way, Epictetus expressed his ideas through the use of words like power, nature, and person.
+
+Both authors' emotional representations of their respective ideas were very evenly distributed.
+
+### Conclusion:
+
+Every author within a school has a different writing style. However, we do see some patterns amongst the authors of some school. The authors in the school of capitalism use words that are similar to each other to express their ideas, whereas the authors in other schools use words that are completely different to represent the same idea. Some authors also share some words in common, while others choose to place more emphasis on a single word, such as "god" in the school of rationalism and "idea" in the school of empiricism. Some authors utilize words that are identical, some authors use different words, a few others use fewer words, and yet others use an evenly distributed range of words to communicate their ideas.
+
+Analysis shows that authors from the same school use various language to convey the same concepts. The results of sentiment analysis of the data reveal that the proportion of emotions utilize by the authors to describe their views varies.
+
+### Reference
+
+1.  <https://i0.wp.com/greekerthanthegreeks.com/wp-content/uploads/2014/11/img-ancient-greek-philosophers.jpg?w=1000&ssl=1>
